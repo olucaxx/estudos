@@ -1,6 +1,9 @@
 from os import system
+import pandas as pd
+
 
 def register_student() -> list:
+    system('cls')
     student = []
     student.append(input("Qual o nome do aluno? "))
     
@@ -77,3 +80,9 @@ while True:
     print("Opção inválida!")
 
 show_report(students)
+
+headers = ['NOME', 'P1', 'P2', 'EXAME', 'SITUAÇÃO']
+df = pd.DataFrame(students)
+
+df.to_csv("notas_alunos.csv", encoding='utf-8', index=False, header=headers)
+
