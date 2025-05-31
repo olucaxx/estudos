@@ -6,7 +6,7 @@ from os import system
 AQUI FICA A LOGICA PRINCIPAL DO CATALOGO DE FILMES (MENU, CADASTRO E REMOCAO)
 """
 
-def menu() -> None:
+def menu():
     while True:
         filmes_pendentes, filmes_assistidos = pegar_filmes() # carrega nossos filmes
         
@@ -31,7 +31,7 @@ def menu() -> None:
         
         salvar_filmes(filmes_pendentes, filmes_assistidos) # guarda os filmes nos seus respectivos arquivos
 
-def adicionar_filme_pendente(filmes_pendentes: list) -> None:
+def adicionar_filme_pendente(filmes_pendentes: list):
     system('cls')
     # um novo filme precisa dos campos "NOME | DURACAO EM MINUTOS | CATEGORIA | ANO DE LANÇAMENTO"
     
@@ -58,13 +58,17 @@ def adicionar_filme_pendente(filmes_pendentes: list) -> None:
     print(f'{novo_filme} adicionado com sucesso!')
     
 
-def marcar_filme_como_assistido(filmes_pendentes: list, filmes_assistidos: list) -> None:
+def marcar_filme_como_assistido(filmes_pendentes: list, filmes_assistidos: list):
     # um filme que foi assisitdo precisa ter os campos "NOTA | COMENTÁRIO" adicionados em cima dos 4 originais
     
     exibir.filmes_pendentes(filmes_pendentes)
     try:
-        index_filme = int(input("Digite o número do filme que foi assistido: ")) - 1
+        index_filme = int(input("Digite o número do filme que foi assistido: "))-1
+        if index_filme < 0:
+            print("Filme não encontrado.")
+            return
         novo_filme = filmes_pendentes.pop(index_filme) # pop() remove um elemento pelo index que a gente passar
+
     except IndexError: # index fora da lista
         print("Filme não encontrado.")
         return
@@ -75,7 +79,7 @@ def marcar_filme_como_assistido(filmes_pendentes: list, filmes_assistidos: list)
     while True:
         try:
             nota = float(input("Digite uma nota de 0 a 10 para o filme: "))
-            if not (nota > 10 or nota < 0): # se ela for menor que 0 ou maior que 10, a expressão retorna True, que ao inverter fica False e não quebra o loop
+            if nota <= 10 and nota >= 0: # se ela for menor que 0 ou maior que 10, a expressão retorna True, que ao inverter fica False e não quebra o loop
                 break
             print("Nota inválida!")
         except ValueError:
@@ -91,7 +95,7 @@ def marcar_filme_como_assistido(filmes_pendentes: list, filmes_assistidos: list)
     filmes_assistidos.append(novo_filme)
     
 
-def remover_filme(filmes_pendentes: list, filmes_assistidos: list) -> None:
+def remover_filme(filmes_pendentes: list, filmes_assistidos: list):
     system('cls')
     while True:
         opcao = input("1 -> Remover filme pendente ou 2 -> Remover filme assistido? ")
@@ -103,8 +107,11 @@ def remover_filme(filmes_pendentes: list, filmes_assistidos: list) -> None:
             
             exibir.filmes_pendentes(filmes_pendentes)
             try:
-                index_filme = int(input('\nDigite o número do filme que deseja remover: ')) - 1
-                filme_removido = filmes_pendentes.pop(index_filme) # pop() remove um elemento pelo index que a gente passar
+                index_filme = int(input('\nDigite o número do filme que deseja remover: '))
+                if index_filme >= 1:
+                    filme_removido = filmes_pendentes.pop(index_filme-1) # pop() remove um elemento pelo index que a gente passar
+                    return
+                print("Filme não encontrado.")
             except IndexError: # index fora da lista
                 print("Filme não encontrado.")
             except ValueError: # valor digitado não é um número inteiro
@@ -119,8 +126,11 @@ def remover_filme(filmes_pendentes: list, filmes_assistidos: list) -> None:
             
             exibir.filmes_assistidos(filmes_assistidos)
             try:
-                index_filme = int(input('\nDigite o número do filme que deseja remover: ')) - 1
-                filme_removido = filmes_assistidos.pop(index_filme) # pop() remove um elemento pelo index que a gente passar
+                index_filme = int(input('\nDigite o número do filme que deseja remover: '))
+                if index_filme >= 1:
+                    filme_removido = filmes_assistidos.pop(index_filme-1) # pop() remove um elemento pelo index que a gente passar
+                    return
+                print("Filme não encontrado.")
             except IndexError: # index fora da lista
                 print("Filme não encontrado.")
             except ValueError: # valor digitado não é um número inteiro
