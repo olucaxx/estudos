@@ -183,12 +183,56 @@ class Matrix():
         
         return string
         
+
+def t(matrix: 'Matrix') -> 'Matrix':
+    elements = []
+    for i in range(matrix.ncol):
+        for j in range(matrix.nrow):
+            elements.append(matrix.values[j][i])
+            
+    return Matrix(nrow=matrix.ncol, ncol=matrix.nrow, data=elements, byrow=True)
+
+
+def diag(matrix: 'Matrix', new_value: int | float | None = None) -> 'Matrix | list[int | float]':
+    matrix_size = matrix.ncol if matrix.ncol < matrix.nrow else matrix.nrow
+    
+    # aqui ele vai apenas retornar os elementos da diag principal
+    if new_value is None:
+        return [matrix.values[i][i] for i in range(matrix_size)]
+    
+    # aqui ele altera os valores da diag principal da matriz que foi passada como arg
+    for i in range(matrix_size):
+        matrix.values[i][i] = new_value
+    
+    # retorna a matriz, caso você queria dar um print
+    return matrix
+
+
+def det(matrix: 'Matrix') -> int | float:
+    def loop(numbers: list[list[int | float]]):
+        if len(numbers) == 1:
+            return numbers[0][0]
         
-def main():
-    matrizA = Matrix(data=[1,3,2,2,1,1], nrow=2, ncol=3, byrow=True)
-    matrizB = Matrix(data=[2,1,3,1,0,2,1,1,0], nrow=3, ncol=3, byrow=True)
-    print(matrizA * matrizB)
-       
+        if len(numbers) == 2:
+            return numbers[0][0] * numbers[1][1] - numbers[0][1] * numbers[1][0]
+        
+        det_value = 0
+        for j in range(0, len(numbers)):
+            # algoritmo de Laplace (misericórdia que ngc tenso)
+            cofator = (-1) ** (0 + j) * numbers[0][j] * loop([row[:j] + row[j+1:] for row in numbers[1:]])
+            det_value += cofator
+            
+        return det_value
+    
+    # ela precisa ser quadrada
+    if matrix.ncol != matrix.nrow:
+        raise ValueError("must be a square matrix")
+    
+    return loop(matrix.values)
+
        
 if __name__ == "__main__":
-    main()
+    matrizA = Matrix(data=[3,1,4,2,0,6,1,5,6], nrow=3, ncol=3, byrow=True)
+    matrizB = Matrix(data=[2,1,3,1,0,2,1,1,0], nrow=3, ncol=3, byrow=True)
+    print(matrizA)
+    print(det(matrizA))
