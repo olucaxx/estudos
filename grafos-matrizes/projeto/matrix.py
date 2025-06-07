@@ -1,4 +1,5 @@
 from typing import Iterable
+import csv
 
 class Matrix():
     def __init__(self, nrow: int, ncol: int, byrow: bool = False, dimnames: list[list[str]] | None = None, data: Iterable[int | float] | None = None):
@@ -145,14 +146,15 @@ class Matrix():
     def __str__(self) -> str:
         # caso não seja informado os nomes paras as linhas e colunas, vamos gerar apenas os index delas
         if not self.dimnames:
-            string = " "*4
+            string = " " * (3 + len(str(self.nrow)))
+            row_num_spacing = 3 + len(str(self.nrow))
             # colocar os números que indicam a coluna primeiro, como um cabeçalho
             for i in range(self.ncol):
                 string += f"[,{i}]".rjust(7)
             string += "\n"
                 
             for i in range(self.nrow):
-                string += f"[{i},]"
+                string += f"[{i},]".rjust(row_num_spacing)
                 for item in self.values[i]:
                     string += f"{str(item):>7}"
                 string += "\n"
@@ -183,6 +185,47 @@ class Matrix():
         
         return string
         
+        
+    def to_csv(self, name: str) -> None:
+        if not name:
+            raise NameError("you need to inform a name for the .csv file")
+        
+        with open(name + ".csv", mode='w', encoding='utf-8') as file:
+            writer = csv.writer(file)
+            
+            if self.dimnames:
+                writer.writerow([""] + self.dimnames[1])
+                
+                for i in range(self.nrow):
+                    writer.writerow([self.dimnames[0][i]] + self.values[i])
+                
+                return
+            
+            writer.writerows(self.values)
+            
+    @staticmethod
+    def from_csv(path: str) -> 'Matrix':
+        """
+        PRECISA DE ROW NAMES E COLUMN NAMES
+        """
+        row_names = []
+        column_names = []
+        data = []
+        
+        with open(path, mode='r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+
+            headers_row = next(reader)
+            column_names = headers_row[1:] 
+
+            for row in reader:
+                row_names.append(row[0].strip())  
+                
+                for value in row[1:]:
+                    data.append(int(value.strip()))
+        
+        return Matrix(nrow=len(row_names), ncol=len(column_names), data=data, dimnames=[row_names, column_names], byrow=True)
+
 
 def t(matrix: 'Matrix') -> 'Matrix':
     elements = []
@@ -190,7 +233,7 @@ def t(matrix: 'Matrix') -> 'Matrix':
         for j in range(matrix.nrow):
             elements.append(matrix.values[j][i])
             
-    return Matrix(nrow=matrix.ncol, ncol=matrix.nrow, data=elements, byrow=True)
+    return Matrix(nrow=matrix.ncol, ncol=matrix.nrow, data=elements, dimnames=[matrix.dimnames[1], matrix.dimnames[0]], byrow=True)
 
 
 def diag(matrix: 'Matrix', new_value: int | float | None = None) -> 'Matrix | list[int | float]':
@@ -229,10 +272,3 @@ def det(matrix: 'Matrix') -> int | float:
         raise ValueError("must be a square matrix")
     
     return loop(matrix.values)
-
-       
-if __name__ == "__main__":
-    matrizA = Matrix(data=[3,1,4,2,0,6,1,5,6], nrow=3, ncol=3, byrow=True)
-    matrizB = Matrix(data=[2,1,3,1,0,2,1,1,0], nrow=3, ncol=3, byrow=True)
-    print(matrizA)
-    print(det(matrizA))
