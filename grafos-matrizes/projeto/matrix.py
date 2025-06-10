@@ -232,8 +232,11 @@ def t(matrix: 'Matrix') -> 'Matrix':
     for i in range(matrix.ncol):
         for j in range(matrix.nrow):
             elements.append(matrix.values[j][i])
-            
-    return Matrix(nrow=matrix.ncol, ncol=matrix.nrow, data=elements, dimnames=[matrix.dimnames[1], matrix.dimnames[0]], byrow=True)
+    
+    if matrix.dimnames:
+        return Matrix(nrow=matrix.ncol, ncol=matrix.nrow, data=elements, dimnames=[matrix.dimnames[1], matrix.dimnames[0]], byrow=True)
+    
+    return Matrix(nrow=matrix.ncol, ncol=matrix.nrow, data=elements, byrow=True)
 
 
 def diag(matrix: 'Matrix', new_value: int | float | None = None) -> 'Matrix | list[int | float]':
