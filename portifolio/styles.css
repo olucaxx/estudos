@@ -1,3 +1,13 @@
+html {
+    scroll-snap-type: block mandatory;
+        scroll-behavior: smooth;
+}
+
+section {
+    scroll-snap-align: start none;
+    scroll-snap-stop: always;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -23,8 +33,11 @@ li {
 }
 
 ul {
-    border-radius: 5px;
-    padding: 10px;
+    padding: 5px;
+}
+
+ul:hover {
+    border-bottom: 2px solid black;
 }
 
 a {
@@ -32,11 +45,7 @@ a {
     color: black;
 }
 
-ul:hover {
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-#inicio {
+#inicio, #sobre-mim {
     height: 100vh;
     display: flex;
     flex-direction: row;
@@ -63,4 +72,12 @@ button {
 img {
     height: 500px;
     width: 500px;
+}
+
+.mini-biografia {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
